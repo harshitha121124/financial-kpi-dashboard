@@ -10,9 +10,10 @@ num_records = 25000
 start_date = datetime(2024, 1, 1)
 end_date = datetime(2025, 12, 31)
 
-# Categories
+# Regions
 regions = ["North", "South", "East", "West", "Central"]
 
+# Departments
 departments = [
     "Sales",
     "Marketing",
@@ -21,6 +22,7 @@ departments = [
     "Finance"
 ]
 
+# Product Categories
 product_categories = [
     "Beverages",
     "Dairy",
@@ -29,6 +31,41 @@ product_categories = [
     "Home Care",
     "Packaged Foods"
 ]
+
+# Region performance factors
+region_factor = {
+    "North": 1.20,
+    "South": 1.10,
+    "West": 1.35,
+    "East": 0.95,
+    "Central": 0.85
+}
+
+# Seasonal sales patterns
+seasonality = {
+    1: 0.85,
+    2: 0.80,
+    3: 0.95,
+    4: 1.00,
+    5: 1.05,
+    6: 0.95,
+    7: 1.10,
+    8: 1.15,
+    9: 1.20,
+    10: 1.40,
+    11: 1.60,
+    12: 1.85
+}
+
+# Category-specific profit margins
+category_margin = {
+    "Beverages": (0.25, 0.40),
+    "Dairy": (0.15, 0.30),
+    "Snacks": (0.30, 0.45),
+    "Personal Care": (0.35, 0.50),
+    "Home Care": (0.25, 0.40),
+    "Packaged Foods": (0.20, 0.35)
+}
 
 data = []
 
@@ -41,13 +78,34 @@ for i in range(1, num_records + 1):
 
     date = start_date + timedelta(days=random_days)
 
-    revenue = random.randint(50000, 250000)
+    month = date.month
 
-    expense_ratio = random.uniform(0.50, 0.85)
+    region = random.choice(regions)
 
-    expenses = round(revenue * expense_ratio, 2)
+    category = random.choice(product_categories)
 
-    profit = round(revenue - expenses, 2)
+    base_revenue = random.randint(50000, 250000)
+
+    revenue = int(
+        base_revenue *
+        seasonality[month] *
+        region_factor[region]
+    )
+
+    profit_margin = random.uniform(
+        category_margin[category][0],
+        category_margin[category][1]
+    )
+
+    profit = round(
+        revenue * profit_margin,
+        2
+    )
+
+    expenses = round(
+        revenue - profit,
+        2
+    )
 
     budget_target = round(
         revenue * random.uniform(1.05, 1.20),
@@ -59,9 +117,9 @@ for i in range(1, num_records + 1):
     data.append([
         f"TXN{i:05d}",
         date.strftime("%Y-%m-%d"),
-        random.choice(regions),
+        region,
         random.choice(departments),
-        random.choice(product_categories),
+        category,
         revenue,
         expenses,
         profit,
